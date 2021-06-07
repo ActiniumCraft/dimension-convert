@@ -24,7 +24,7 @@ def is_args_length_match(args: list, length: int):
     return len(args) == length
 
 
-def on_info(server, info):
+def on_user_info(server, info):
     user_args: list = info.content.split(' ')
 
     if not user_args[0] == '!!cdc':
