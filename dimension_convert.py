@@ -13,12 +13,12 @@ PLUGIN_METADATA = {
 }
 
 HELP_MESSAGE = '''
-================= §b维度坐标转换 §r==================
-§l转换主世界和地狱的对应坐标，快速搭建地狱交通。
-§6Github: https://github.com/ActiniumCraft/dimension-convert
-§7!!cdc §r显示帮助信息
-§7!!cdc overworld x z §r将主世界坐标转为地狱坐标
-§7!!cdc nether x z §r将地狱坐标转为主世界坐标
+================= §b维度坐标转换§r ==================
+§l转换主世界和地狱的对应坐标，快速搭建地狱交通。§r
+§6Github: https://github.com/ActiniumCraft/dimension-convert§r
+§7!!cdc§r 显示帮助信息
+§7!!cdc overworld x z§r 将主世界坐标转为地狱坐标
+§7!!cdc nether x z§r 将地狱坐标转为主世界坐标
 '''
 
 
