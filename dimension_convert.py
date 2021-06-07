@@ -1,7 +1,5 @@
-from mcdreforged.api.command import Literal, IllegalArgument
-
 PLUGIN_METADATA = {
-    'id': 'dimension_convert.py',
+    'id': 'dimension_convert',
     'version': '1.0.0',
     'name': 'Dimension Convert',
     'description': 'A plugin to convert dimension coordinate.',
@@ -40,9 +38,9 @@ def on_info(server, info):
         z_coordinate = float(user_args[3])
         converted_coordinate = [0, 0]
         if user_args[1] == 'nether':
-            converted_coordinate = [int(x_coordinate*8), int(z_coordinate*8)]
+            converted_coordinate = [int(x_coordinate * 8), int(z_coordinate * 8)]
         if user_args[1] == 'overworld':
-            converted_coordinate = [int(x_coordinate/8), int(z_coordinate/8)]
+            converted_coordinate = [int(x_coordinate / 8), int(z_coordinate / 8)]
         server.reply(info, '对应维度坐标: x = {}, z = {}'.format(converted_coordinate[0], converted_coordinate[1]))
 
 
