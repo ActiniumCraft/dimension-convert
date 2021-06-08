@@ -6,7 +6,7 @@
 
 ## 前置插件
 
-v1.1.0 以下版本可直接使用，但不再享受新版本的功能。
+v1.1.0 以下版本可直接使用，但不再享有新版本的功能，但依旧接收漏洞修复更新。
 
 v1.1.0 或之后的版本需要配合 [MinecraftDataAPI](https://github.com/MCDReforged/MinecraftDataAPI) 使用。
 
