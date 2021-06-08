@@ -2,7 +2,7 @@ from mcdreforged.api.all import *
 
 PLUGIN_METADATA = {
     'id': 'dimension_convert',
-    'version': '1.0.0',
+    'version': '1.1.0',
     'name': 'Dimension Convert',
     'description': 'A plugin to convert dimension coordinate.',
     'author': 'eleven',
