@@ -24,16 +24,6 @@ HELP_MESSAGE = '''
 '''
 
 
-def is_args_length_match(args: list[str], length: int) -> bool:
-    """Compare the args list by giving length.
-
-    :param args: The args list. For example: ['!!cdc', 'nether', '8', '8'].
-    :param length: The args expects to be. For example: 4 match giving args list ['!!cdc', 'nether', '8', '8'].
-    :return: The bool value. True when args length match; otherwise, it's False.
-    """
-    return len(args) == length
-
-
 def convert_dimension_coordinate(dimension: str, x_coord: float, z_coord: float) -> dict[str, int]:
     """Convert nether/overworld dimension coordinate to its opposites dimension.
 
@@ -51,47 +41,79 @@ def convert_dimension_coordinate(dimension: str, x_coord: float, z_coord: float)
 
 
 @new_thread(PLUGIN_METADATA['name'])
-def execute_convert_command_by_player_coordinate(source: Info) -> None:
-    """Execute the dimension convert command by giving player command source info.
+def convert_by_player_current_coordinate(source: CommandSource):
+    if isinstance(source, PlayerCommandSource):
+        api = source.get_server().get_plugin_instance('minecraft_data_api')
+        coordinate = api.get_player_coordinate(source.player)
 
-    :param source: The command source info.
-    :return: None.
+        dimension_translate = {0: 'overworld', -1: 'nether'}
+        dimension = dimension_translate[api.get_player_dimension(source.player)]
+
+        converted_coordinate = convert_dimension_coordinate(dimension, coordinate.x, coordinate.z)
+        source.reply('对应维度坐标: x = {}, z = {}'.format(converted_coordinate['x'], converted_coordinate['z']))
+
+
+@new_thread(PLUGIN_METADATA['name'])
+def convert_by_nether_coordinate(source: CommandSource, *coordinate):
+    if isinstance(source, PlayerCommandSource):
+        coordinate = convert_dimension_coordinate('nether', coordinate[0], coordinate[1])
+        source.reply('对应维度坐标: x = {}, z = {}'.format(coordinate['x'], coordinate['z']))
+
+
+@new_thread(PLUGIN_METADATA['name'])
+def convert_by_overworld_coordinate(source: CommandSource, *coordinate):
+    if isinstance(source, PlayerCommandSource):
+        coordinate = convert_dimension_coordinate('overworld', coordinate[0], coordinate[1])
+        source.reply('对应维度坐标: x = {}, z = {}'.format(coordinate['x'], coordinate['z']))
+
+
+@new_thread(PLUGIN_METADATA['name'])
+def reply_help_message(source: CommandSource):
+    if isinstance(source, PlayerCommandSource):
+        source.reply(HELP_MESSAGE)
+
+
+class IllegalPoint(CommandSyntaxError):
+    def __init__(self, char_read: int):
+        super().__init__('不支持的参数', char_read)
+
+
+class IncompletePoint(CommandSyntaxError):
+    def __init__(self, char_read: int):
+        super().__init__('不完整的参数', char_read)
+
+
+class PointArgument(ArgumentNode):
+    """Argument node accept input x z coordinate.
+
     """
-    api = source.get_server().get_plugin_instance('minecraft_data_api')
-    coordinate = api.get_player_coordinate(source.player)
-    dim_convert_dict = {0: 'overworld', -1: 'nether'}
-    dimension = dim_convert_dict[api.get_player_dimension(source.player)]
-    converted_coordinate = convert_dimension_coordinate(dimension, coordinate.x, coordinate.z)
-    source.get_server().reply(source, '对应维度坐标: x = {}, z = {}'.format(converted_coordinate['x'],
-                                                                      converted_coordinate['z']))
+    def parse(self, text: str) -> ParseResult:
+        total_read = 0
+        coordinate = []
+        for i in range(2):
+            value, read = command_builder_util.get_float(text[total_read:])
+            if read == 0:
+                raise IncompletePoint(total_read)
+            total_read += read
+            if value is None:
+                raise IllegalPoint(total_read)
+            coordinate.append(value)
+        return ParseResult(coordinate, total_read)
 
 
-def convert_if_command_is_here(user_args, info) -> None:
-    if user_args[1] == 'here':
-        execute_convert_command_by_player_coordinate(info)
-
-
-def on_user_info(server: ServerInterface, info: Info):
-    user_args = info.content.split(' ')
-    command_prefix = user_args[0]
-
-    if not command_prefix == '!!cdc':
-        return
-
-    if is_args_length_match(user_args, 1):
-        server.reply(info, HELP_MESSAGE)
-
-    if is_args_length_match(user_args, 2):
-        convert_if_command_is_here(user_args, info)
-
-    if is_args_length_match(user_args, 4):
-        dimension = user_args[1]
-        x_coordinate = float(user_args[2])
-        z_coordinate = float(user_args[3])
-
-        converted_coordinate = convert_dimension_coordinate(dimension, x_coordinate, z_coordinate)
-        server.reply(info, '对应维度坐标: x = {}, z = {}'.format(converted_coordinate['x'], converted_coordinate['z']))
-
-
-def on_load(server, prev):
+def on_load(server: ServerInterface, prev):
     server.register_help_message('!!cdc', '转换主世界和地狱的对应坐标')
+    server.register_command(Literal('!!cdc').runs(reply_help_message).
+                            then(Literal('here').runs(convert_by_player_current_coordinate)
+                                 ).
+                            then(Literal('overworld').
+                                 then(PointArgument('coord').
+                                      runs(lambda src, ctx: convert_by_overworld_coordinate(src, *ctx['coord']))
+                                      )
+                                 ).
+                            then(Literal('nether').
+                                 then(PointArgument('coord').
+                                      runs(lambda src, ctx: convert_by_nether_coordinate(src, *ctx['coord']))
+                                      )
+                                 )
+                            )
