@@ -14,3 +14,8 @@ version:
       dimension_convert.py: https://raw.githubusercontent.com/ActiniumCraft/dimension-convert/v1.1.0/dimension_convert.py
       dependencies:
         plugin: minecraft_data_api
+  1.1.1:
+    files:
+      dimension_convert.py: https://raw.githubusercontent.com/ActiniumCraft/dimension-convert/v1.1.1/dimension_convert.py
+      dependencies:
+        plugin: minecraft_data_api
