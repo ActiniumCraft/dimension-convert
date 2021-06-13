@@ -10,6 +10,10 @@ v1.1.0 以下版本可直接使用，但不再享有新版本的功能，但依�
 
 v1.1.0 或之后的版本需要配合 [MinecraftDataAPI](https://github.com/MCDReforged/MinecraftDataAPI) 使用。
 
+## 下载方式
+
+ 推荐在 [Release](https://github.com/ActiniumCraft/dimension-convert/releases) 根据需求下载需要的版本。
+
 ## 指令帮助
 
 !!cdc 显示帮助信息
