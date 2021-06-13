@@ -1,0 +1,16 @@
+id: dimension_convert
+name: Dimension Convert
+author: eleven
+describe:
+  en_us: A plugin to convert dimension coordinate
+  zh_cn: 一个多维度坐标转换插件，一般用于搭建地狱交通时使用
+link: https://github.com/ActiniumCraft/dimension-convert
+version:
+  1.0.x:
+    files:
+      dimension_convert.py: https://raw.githubusercontent.com/ActiniumCraft/dimension-convert/release-1.0/dimension_convert.py
+  1.1.x:
+    files:
+      dimension_convert.py: https://raw.githubusercontent.com/ActiniumCraft/dimension-convert/main/dimension_convert.py
+      dependencies:
+        plugin: minecraft_data_api
