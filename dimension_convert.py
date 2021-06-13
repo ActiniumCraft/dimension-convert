@@ -32,39 +32,39 @@ def convert_dimension_coordinate(dimension: str, x_coord: float, z_coord: float)
     :param z_coord: The z coordinate used in converting.
     :return: A dict[str, int] store the coordinate information, keys are x and z.
     """
-    coordinate = {'x': 0, 'z': 0}
+    coordinates = {'x': 0, 'z': 0}
     if dimension == 'nether':
-        coordinate = {'x': int(x_coord * 8), 'z': int(z_coord * 8)}
+        coordinates = {'x': int(x_coord * 8), 'z': int(z_coord * 8)}
     if dimension == 'overworld':
-        coordinate = {'x': int(x_coord / 8), 'z': int(z_coord / 8)}
-    return coordinate
+        coordinates = {'x': int(x_coord / 8), 'z': int(z_coord / 8)}
+    return coordinates
 
 
 @new_thread(PLUGIN_METADATA['name'])
 def convert_by_player_current_coordinate(source: CommandSource):
     if isinstance(source, PlayerCommandSource):
         api = source.get_server().get_plugin_instance('minecraft_data_api')
-        coordinate = api.get_player_coordinate(source.player)
+        coordinates = api.get_player_coordinate(source.player)
 
         dimension_translate = {0: 'overworld', -1: 'nether'}
         dimension = dimension_translate[api.get_player_dimension(source.player)]
 
-        converted_coordinate = convert_dimension_coordinate(dimension, coordinate.x, coordinate.z)
-        source.reply('对应维度坐标: x = {}, z = {}'.format(converted_coordinate['x'], converted_coordinate['z']))
+        converted_coordinates = convert_dimension_coordinate(dimension, coordinates.x, coordinates.z)
+        source.reply('对应维度坐标: x = {}, z = {}'.format(converted_coordinates['x'], converted_coordinates['z']))
 
 
 @new_thread(PLUGIN_METADATA['name'])
-def convert_by_nether_coordinate(source: CommandSource, *coordinate):
+def convert_by_nether_coordinate(source: CommandSource, *coordinates):
     if isinstance(source, PlayerCommandSource):
-        coordinate = convert_dimension_coordinate('nether', coordinate[0], coordinate[1])
-        source.reply('对应维度坐标: x = {}, z = {}'.format(coordinate['x'], coordinate['z']))
+        converted_coordinates = convert_dimension_coordinate('nether', coordinates[0], coordinates[1])
+        source.reply('对应维度坐标: x = {}, z = {}'.format(converted_coordinates['x'], converted_coordinates['z']))
 
 
 @new_thread(PLUGIN_METADATA['name'])
-def convert_by_overworld_coordinate(source: CommandSource, *coordinate):
+def convert_by_overworld_coordinate(source: CommandSource, *coordinates):
     if isinstance(source, PlayerCommandSource):
-        coordinate = convert_dimension_coordinate('overworld', coordinate[0], coordinate[1])
-        source.reply('对应维度坐标: x = {}, z = {}'.format(coordinate['x'], coordinate['z']))
+        converted_coordinates = convert_dimension_coordinate('overworld', coordinates[0], coordinates[1])
+        source.reply('对应维度坐标: x = {}, z = {}'.format(converted_coordinates['x'], converted_coordinates['z']))
 
 
 @new_thread(PLUGIN_METADATA['name'])
@@ -87,6 +87,7 @@ class PointArgument(ArgumentNode):
     """Argument node accept input x z coordinate.
 
     """
+
     def parse(self, text: str) -> ParseResult:
         total_read = 0
         coordinate = []
